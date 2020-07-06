@@ -32,6 +32,7 @@ class Transaction
       initialized_transaction.set_recurrency(token)
       if !Expense.where(plaid_id: initialized_transaction.plaid_id).exists?
         entity = Entity.find_or_create_by(name: initialized_transaction.name)
+        # byebug
         expense = Expense.create(
           user: user, 
           entity: entity, 
@@ -59,11 +60,11 @@ class Transaction
   end
 
   def set_recurrency(token)
+    
     @recurring = is_recurrent?(token)
   end
 
   def is_recurrent?(token)
-    # byebug
     transactions = Plaid.fetch_by_dates_month(token, date.prev_month)
     transactions += Plaid.fetch_by_dates_month(token, date.prev_month.prev_month)
     recurring = transactions.select do |transaction|
