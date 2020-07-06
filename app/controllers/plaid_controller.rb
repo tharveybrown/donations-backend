@@ -2,12 +2,13 @@
 require_relative '../models/transaction.rb'
 
 class PlaidController < ApplicationController
+  before_action :require_login
   include Plaid
   # include Transaction
 
   def authlogin 
+    
     token = params[:token]
-    # byebug
     @access_token = Plaid.generate_access_token(token)
     
     if @access_token
@@ -23,8 +24,10 @@ class PlaidController < ApplicationController
   end
 
   def transactions
-    @bearer_token = bearer_token
-    @transactions = Transaction.all(@bearer_token)
+    
+    
+    @bearer_token = params[:plaid][:access_token]
+    @transactions = Transaction.all(@bearer_token, session_user)
     if @transactions
       render json: {
         transactions: @transactions
@@ -38,10 +41,6 @@ class PlaidController < ApplicationController
   end
 
   private
-  def bearer_token
-    pattern = /^Bearer /
-    header  = request.headers['Authorization']
-    header.gsub(pattern, '') if header && header.match(pattern)
-  end
+
 
 end

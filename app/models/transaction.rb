@@ -2,13 +2,14 @@ require 'plaid'
 require 'date'
 require_relative './plaid.rb'
 
-class Transaction
-  # include Plaid
-  attr_reader :id, :name, :amount, :iso_currency_code, :category_id,
+class Transaction 
+  include Plaid
+  
+  attr_reader :plaid_id, :name, :amount, :iso_currency_code, :category_id,
               :type, :date, :account_id, :recurring
 
   def initialize(transaction_data = {})
-    @id = transaction_data['transaction_id']
+    @plaid_id = transaction_data['transaction_id']
     @name = transaction_data['name']
     @amount = transaction_data['amount']
     @iso_currency_code = transaction_data['iso_currency_code']
@@ -20,12 +21,28 @@ class Transaction
   end
 
 
-  def self.all(token)
+  def self.all(token, user)
+    # token ||= token
+    
     Plaid.fetch(token).map do |transaction|
+      
+      # initialized_transaction = Expense.find_or_create_by(plaid_id: transaction.transaction_id)
+      
       initialized_transaction = new(transaction)
       initialized_transaction.set_recurrency(token)
+      if !Expense.where(plaid_id: initialized_transaction.plaid_id).exists?
+        entity = Entity.find_or_create_by(name: initialized_transaction.name)
+        expense = Expense.create(
+          user: user, 
+          entity: entity, 
+          plaid_id: initialized_transaction.plaid_id, name: initialized_transaction.name, amount: initialized_transaction.amount, iso_currency_code: initialized_transaction.iso_currency_code, category: transaction.category[0], recurring: initialized_transaction.recurring)
+          
+      end
+      
+      # initialized_transaction.save
       initialized_transaction
     end
+    Expense.where.not(plaid_id: '')
   end
 
   def self.find(token, id)

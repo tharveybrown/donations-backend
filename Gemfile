@@ -26,6 +26,7 @@ gem 'rack-cors', :require => 'rack/cors'
 gem 'plaid'
 gem "figaro"
 gem 'date'
+gem 'jwt'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 

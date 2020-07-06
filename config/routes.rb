@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
-  post '/login', to: 'sessions#create'
-  delete '/logout', to: 'sessions#destroy'
-  get '/logged_in', to: 'sessions#is_logged_in?'
-  post '/authlogin', to: 'plaid#authlogin'
-  get '/transactions', to: 'plaid#transactions'
-  
   resources :users, only: [:create, :show, :index]
+  post "/login", to: "auth#login"
+  get "/auto_login", to: "auth#auto_login"
+  get "/user_is_authed", to: "auth#user_is_authed"
+  post '/authlogin', to: 'plaid#authlogin'
+  post '/transactions', to: 'plaid#transactions'
+  
   
   resources :entities
   resources :expenses
