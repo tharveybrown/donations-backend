@@ -24,10 +24,10 @@ class PlaidController < ApplicationController
   end
 
   def transactions
-    
-    
+      
     @bearer_token = params[:plaid][:access_token]
     @transactions = Transaction.all(@bearer_token, session_user)
+    
     if @transactions
       render json: {
         transactions: @transactions

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_06_153934) do
+ActiveRecord::Schema.define(version: 2020_07_06_163740) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 2020_07_06_153934) do
     t.string "name"
     t.integer "account_id"
     t.string "iso_currency_code"
+    t.boolean "donation"
     t.index ["entity_id"], name: "index_expenses_on_entity_id"
     t.index ["user_id"], name: "index_expenses_on_user_id"
   end
