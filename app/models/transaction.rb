@@ -35,7 +35,12 @@ class Transaction
         expense = Expense.create(
           user: user, 
           entity: entity, 
-          plaid_id: initialized_transaction.plaid_id, name: initialized_transaction.name, amount: initialized_transaction.amount, iso_currency_code: initialized_transaction.iso_currency_code, category: transaction.category[0], recurring: initialized_transaction.recurring)
+          plaid_id: initialized_transaction.plaid_id, 
+          # name: initialized_transaction.name, 
+          amount: initialized_transaction.amount, 
+          iso_currency_code: initialized_transaction.iso_currency_code, 
+          category: transaction.category[0], 
+          recurring: initialized_transaction.recurring)
           
       end
       
@@ -58,6 +63,7 @@ class Transaction
   end
 
   def is_recurrent?(token)
+    # byebug
     transactions = Plaid.fetch_by_dates_month(token, date.prev_month)
     transactions += Plaid.fetch_by_dates_month(token, date.prev_month.prev_month)
     recurring = transactions.select do |transaction|

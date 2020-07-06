@@ -7,7 +7,8 @@ Rails.application.routes.draw do
   post '/transactions', to: 'plaid#transactions'
   
   
+  
   resources :entities
-  resources :expenses
+  resources :expenses, only: [:index, :create, :update]
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
