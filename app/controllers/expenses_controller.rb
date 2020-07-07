@@ -7,7 +7,7 @@ class ExpensesController < ApplicationController
         include: [:entity]
       }
       render json: expenses.to_json(:include => {
-        :entity => {:only => [:name, :webiste]},
+        :entity => {:only => [:id, :name, :webiste]},
       }, :except => [:updated_at])
     else
       render json: {errors: expenses.errors.full_messages}, status: :not_acceptable
