@@ -7,7 +7,7 @@ class ExpensesController < ApplicationController
         include: [:entity]
       }
       render json: expenses.to_json(:include => {
-        :entity => {:only => [:name, :webiste]},
+        :entity => {:only => [:id, :name, :webiste]},
       }, :except => [:updated_at])
     else
       render json: {errors: expenses.errors.full_messages}, status: :not_acceptable
@@ -15,7 +15,7 @@ class ExpensesController < ApplicationController
     
   end
   def create
-    byebug 
+    
     user = session_user
     entity = Entity.find_or_create_by(name: params[:entity_name])
     expense = Expense.create(user: session_user, entity: entity)
@@ -24,6 +24,23 @@ class ExpensesController < ApplicationController
     else
         render json: {errors: user.errors.full_messages}, status: :not_acceptable
     end
+  end
+
+  def update
+    expense = Expense.find(params[:id])
+    entity = Entity.find(params[:entity][:id])
+    entity.update(name: params[:entity][:name], website: params[:entity][:website])
+    if expense.update(expense_params)
+      options = {
+        include: [:entity]
+      }
+      render json: expense.to_json(:include => {
+        :entity => {:only => [:id, :name, :webiste]},
+      }, :except => [:updated_at])
+    else 
+      render json: {errors: expense.errors.full_messages}, status: :not_acceptable
+    end
+
   end
 
   private

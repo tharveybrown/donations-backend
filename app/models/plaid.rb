@@ -16,6 +16,7 @@ module Plaid
   end
 
   # module Transactions
+    
     MAX_NUMBER_DAYS = 30
 
     # module_function
@@ -27,6 +28,7 @@ module Plaid
 
     def fetch_plaid(access_token, start_date, last_date)
       transaction_response = client.transactions.get(access_token, last_date, start_date)
+      institutions = client.institutions.get(count: 3, offset: 1)
       transactions = transaction_response.transactions
 
       while transactions.length < transaction_response['total_transactions']
