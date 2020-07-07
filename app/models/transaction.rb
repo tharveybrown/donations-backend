@@ -11,13 +11,14 @@ class Transaction
   def initialize(transaction_data = {})
     @plaid_id = transaction_data['transaction_id']
     @name = transaction_data['name']
-    @amount = transaction_data['amount']
+    @amount = transaction_data['amount'] <= 0 ? transaction_data['amount'].abs : -transaction_data['amount']
     @iso_currency_code = transaction_data['iso_currency_code']
-    @category_id = transaction_data['category_id']
-    @type = transaction_data['type']
+    @category = transaction_data['category'][0]
+    # @type = transaction_data['type']
     @date = Date.parse(transaction_data['date'])
     @account_id = transaction_data['account_id']
     @recurring = false
+    @donation = false
   end
 
 
@@ -26,26 +27,14 @@ class Transaction
     
     Plaid.fetch(token).map do |transaction|
       
-      # initialized_transaction = Expense.find_or_create_by(plaid_id: transaction.transaction_id)
-      
       initialized_transaction = new(transaction)
       initialized_transaction.set_recurrency(token)
       if !Expense.where(plaid_id: initialized_transaction.plaid_id).exists?
-        entity = Entity.find_or_create_by(name: initialized_transaction.name)
-        # byebug
-        expense = Expense.create(
-          user: user, 
-          entity: entity, 
-          plaid_id: initialized_transaction.plaid_id, 
-          # name: initialized_transaction.name, 
-          amount: initialized_transaction.amount, 
-          iso_currency_code: initialized_transaction.iso_currency_code, 
-          category: transaction.category[0], 
-          recurring: initialized_transaction.recurring)
+        entity = Entity.find_or_create_by(name: transaction['merchant_name'])
+        
+        expense = Expense.create(initialized_transaction.instance_values.merge(user: user, entity: entity))
           
       end
-      
-      # initialized_transaction.save
       initialized_transaction
     end
     Expense.where.not(plaid_id: '')
@@ -66,7 +55,8 @@ class Transaction
 
   def is_recurrent?(token)
     transactions = Plaid.fetch_by_dates_month(token, date.prev_month)
-    transactions += Plaid.fetch_by_dates_month(token, date.prev_month.prev_month)
+    # commenting out due to rate limiting restrictions from plaid
+    # transactions += Plaid.fetch_by_dates_month(token, date.prev_month.prev_month) 
     recurring = transactions.select do |transaction|
       transaction['name'] == name && transaction['account_id'] == account_id &&
         transaction['amount'] == amount

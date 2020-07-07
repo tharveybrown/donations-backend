@@ -28,7 +28,6 @@ module Plaid
 
     def fetch_plaid(access_token, start_date, last_date)
       transaction_response = client.transactions.get(access_token, last_date, start_date)
-      byebug
       institutions = client.institutions.get(count: 3, offset: 1)
       transactions = transaction_response.transactions
 
