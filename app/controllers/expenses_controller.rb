@@ -61,15 +61,8 @@ class ExpensesController < ApplicationController
       :account_id, 
       :iso_currency_code, 
       :donation,
-<<<<<<< HEAD
-      entity_attributes: [:name, :website]
-    )
-  end
-
-=======
       entity_attributes: [:name, :website],
       user_attributes: [:first_name, :last_name, :email]
     )
   end
->>>>>>> master
 end
