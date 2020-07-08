@@ -15,9 +15,9 @@ class ExpensesController < ApplicationController
     
   end
   def create
-    byebug 
+
     user = session_user
-    entity = Entity.find_or_create_by(name: params[:entity_name])
+    entity = Entity.find_or_create_by(name: params[:name])
     expense = Expense.create(user: session_user, entity: entity)
     if expense.update(expense_params)
        render json: {expense: expense}
