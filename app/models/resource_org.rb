@@ -1,0 +1,2 @@
+class ResourceOrg < ApplicationRecord
+end
