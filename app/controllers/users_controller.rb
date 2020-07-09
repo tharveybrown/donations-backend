@@ -19,7 +19,7 @@ class UsersController < ApplicationController
     if user.valid?
         payload = {user_id: user.id}
         token = encode_token(payload)
-        debugger
+      
         puts token
         render json: {user: user, jwt: token}
     else
