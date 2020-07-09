@@ -9,7 +9,10 @@ class AuthController < ApplicationController
         token = encode_token(payload)
         render json: {user: user, jwt: token, success: "Welcome back, #{user.email}"}
     else
-        render json: {failure: "Log in failed! Email or password invalid!"}
+      render json: { 
+        status: 401,
+        errors: ['no such user', 'verify credentials and try again or signup']
+      }
     end
   end
 
@@ -17,7 +20,10 @@ class AuthController < ApplicationController
     if session_user
       render json: session_user
     else
-      render json: {errors: "No User Logged In"}
+      render json: {
+        logged_in: false,
+        message: 'no such user'
+      }
     end
   end
 

@@ -1,4 +1,4 @@
 class EntitySerializer
   include FastJsonapi::ObjectSerializer
-  attributes :name, :website
+  attributes :id, :name, :website
 end
