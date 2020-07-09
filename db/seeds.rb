@@ -7,7 +7,7 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 # TODO: drop tables first
 # IN THE FUTURE, uncomment: 
-# ResourceOrg.destroy_all
+ResourceOrg.destroy_all
 scrape = Scraper.new
 orgs = scrape.scrape_top_pages
 ResourceOrg.create_from_collection(orgs)

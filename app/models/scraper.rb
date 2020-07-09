@@ -29,12 +29,14 @@ class Scraper
         parsed_url = URI.parse(donation_url)
         website_url = parsed_url.scheme + "://" + parsed_url.hostname
         category = URI.parse(url).path.split("/").last
+        location = org.css('.summary-geography').text[2..-1] # remove first two spaces from org
         orgInfo = {
           name: name,
           description: summary,
           donate: donation_url,
           website: website_url,
           category: category,
+          location: location,
         }
         orgs_list << orgInfo
 
@@ -48,7 +50,3 @@ class Scraper
 
 end
 
-
-
-# scrape = Scraper.new
-# scrape.scrape_top_pages
