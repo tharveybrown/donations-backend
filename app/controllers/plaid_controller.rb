@@ -27,16 +27,17 @@ class PlaidController < ApplicationController
       
     @bearer_token = params[:plaid][:access_token]
     @transactions = Transaction.all(@bearer_token, session_user)
+    expenses = session_user.expenses
     
-    if @transactions
-      render json: {
-        transactions: @transactions
-      }
+    if expenses
+      options = {
+          include: [:entity]
+        }
+      render json: expenses.to_json(:include => {
+        :entity => {:only => [:id, :name, :webiste]},
+      }, :except => [:updated_at])
     else 
-      render json: {
-        status: 500,
-        errors: ['no transactions found']
-      }
+      render json: {errors: expenses.errors.full_messages}, status: :not_acceptable
     end
   end
 
