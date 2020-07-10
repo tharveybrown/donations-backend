@@ -37,7 +37,7 @@ class Transaction
       end
       initialized_transaction
     end
-    Expense.where.not(plaid_id: '')
+    user.expenses.where.not(plaid_id: '')
   end
 
   def self.find(token, id)
