@@ -31,6 +31,7 @@ class Transaction
       initialized_transaction.set_recurrency(token)
       if !Expense.where(plaid_id: initialized_transaction.plaid_id).exists?
         entity = Entity.find_or_create_by(name: transaction['merchant_name'])
+        # byebug
         
         expense = Expense.create(initialized_transaction.instance_values.merge(user: user, entity: entity))
           
@@ -57,10 +58,8 @@ class Transaction
     transactions = Plaid.fetch_by_dates_month(token, date.prev_month)
     # commenting out due to rate limiting restrictions from plaid
     # transactions += Plaid.fetch_by_dates_month(token, date.prev_month.prev_month) 
-    recurring = transactions.select do |transaction|
-      transaction['name'] == name && transaction['account_id'] == account_id &&
-        transaction['amount'] == amount
-    end
-    recurring.count >= 2
+    recurring = transactions.select{|t| t.name == name && t['account_id'] == account_id && t['amount'] == (amount * -1)}
+    
+    recurring.count >= 1
   end
 end
